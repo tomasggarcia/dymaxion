@@ -2,8 +2,8 @@ import os
 from typing import Union
 from fastapi import FastAPI
 from dotenv import load_dotenv
-import motor.motor_asyncio
 from fastapi.middleware.cors import CORSMiddleware
+import motor.motor_asyncio
 
 load_dotenv(".env")
 
@@ -23,11 +23,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+from src.controllers import health_controller, users_controller
