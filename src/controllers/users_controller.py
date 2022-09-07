@@ -2,7 +2,7 @@ from main import app
 from src.models.user_model import UserModel
 from src.services.users_service import UserService
 from fastapi.encoders import jsonable_encoder
-from fastapi import status, Response
+from fastapi import status
 from fastapi.responses import JSONResponse
 
 @app.post("/users", response_description="User added")
@@ -14,12 +14,11 @@ async def create_user(user: UserModel):
         return JSONResponse(status_code=status.HTTP_409_CONFLICT, content=jsonable_encoder({"response": "User already exists"}))
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder({"response": {"user": new_user}}))
 
-@app.delete("/users", response_description="User added")
+@app.delete("/users")
 async def delete_user(user_email: str):
     print(user_email)
     service = UserService()
     delete_status = await service.delete_user(user_email)
     if delete_status:
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder({"response": "User deleted succesfully"}))
-    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=jsonable_encoder({"response": "Email does not exist"}))
-    
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=jsonable_encoder({"response": "Email does not exist"}))
