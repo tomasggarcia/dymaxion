@@ -14,6 +14,9 @@ class FriendRepository():
     async def find_requested_by_email(self, id) -> FriendRequestsModel:
         return await self.get_by({'requested_user_id': id})
 
+    async def find_friend_request(self, requester_user_email, requested_user_email) -> FriendRequestsModel:
+        return await self.get_by({'requester_user_email': requester_user_email, 'requested_user_email': requested_user_email})
+
     async def get_by_id(self, id) -> FriendRequestsModel:
         return await self.get_by({'_id':id})
 
