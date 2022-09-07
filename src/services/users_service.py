@@ -1,6 +1,6 @@
 from typing import Optional
 from src.repositories.user_repository import UserRepository
-from src.models.user_models import UserModel
+from src.models.user_model import UserModel
 
 class UserService():
     async def create_user(self, user: UserModel) -> Optional[UserModel]:

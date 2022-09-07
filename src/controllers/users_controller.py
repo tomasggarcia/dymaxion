@@ -1,5 +1,5 @@
 from main import app
-from src.models.user_models import UserModel
+from src.models.user_model import UserModel
 from src.services.users_service import UserService
 from fastapi.encoders import jsonable_encoder
 from fastapi import status, Response

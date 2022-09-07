@@ -1,6 +1,6 @@
 from typing import Any, Optional
 from src.config.database import db
-from src.models.user_models import UserModel
+from src.models.user_model import UserModel
 
 class UserRepository():
 
