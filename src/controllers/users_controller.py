@@ -16,9 +16,8 @@ async def create_user(user: UserModel):
 
 @app.delete("/users")
 async def delete_user(user_email: str):
-    print(user_email)
     service = UserService()
     delete_status = await service.delete_user(user_email)
     if delete_status:
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder({"response": "User deleted succesfully"}))
-    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=jsonable_encoder({"response": "Email does not exist"}))
+    return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=jsonable_encoder({"response": "Email does not exist"}))

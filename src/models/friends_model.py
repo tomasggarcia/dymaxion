@@ -8,6 +8,6 @@ class StatusEnum(IntEnum):
     rejected = 2
 
 class FriendRequestsModel(BaseModel):
-    requester_user_id: UserModel
-    requested_user_id: UserModel
+    requester_user_email: str
+    requested_user_email: str
     status: StatusEnum = StatusEnum.requested
