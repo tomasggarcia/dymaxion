@@ -9,3 +9,10 @@ class UserService():
         if existing_user is None:
             return await repository.create(user)
         return None
+
+    async def delete_user(self, email) -> bool:
+        repository = UserRepository()
+        deleted_documents: int = await repository.delete_by_email(email)
+        if deleted_documents > 0:
+            return True
+        return False

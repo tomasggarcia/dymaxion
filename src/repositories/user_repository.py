@@ -17,3 +17,7 @@ class UserRepository():
     async def get_by(self, filter: dict) -> UserModel:
         user = await db["users"].find_one(filter)
         return UserModel(**user) if user is not None else None
+
+    async def delete_by_email(self, email: str) -> int:
+        delete_result_object =  await db["users"].delete_one({'email':email})
+        return delete_result_object.deleted_count
