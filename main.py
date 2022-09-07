@@ -1,17 +1,10 @@
-import os
-from typing import Union
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-import motor.motor_asyncio
 
 load_dotenv(".env")
 
 app = FastAPI(title='Chat Challenge', description='API for manage users and chat rooms')
-
-mongodburl = os.environ.get("DB_CONNECTION_STRING")
-client = motor.motor_asyncio.AsyncIOMotorClient(mongodburl)
-db = client.user_ms
 
 origins = ["*"]
 
@@ -23,4 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+from src.config import database
 from src.controllers import health_controller, users_controller
