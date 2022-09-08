@@ -32,3 +32,18 @@ async def accept_friend_request(friend_request: FriendRequestsModel):
     if updated_friend_request['updated'] is False:
         return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=jsonable_encoder({"response": updated_friend_request['message']}))
     return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=jsonable_encoder({"response": updated_friend_request}))
+
+
+@app.put("/friends/reject")
+async def accept_friend_request(friend_request: FriendRequestsModel):
+    friend_request = jsonable_encoder(friend_request)
+    requester_user_email = friend_request['requester_user_email']
+    requested_user_email = friend_request['requested_user_email']
+    if requester_user_email == requested_user_email:
+        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=jsonable_encoder({"response": "Emails cannot be equal"}))      
+    service = FriendService()
+    updated_friend_request = await service.reject_friend_request(requester_user_email,requested_user_email)
+    print(updated_friend_request)
+    if updated_friend_request['updated'] is False:
+        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=jsonable_encoder({"response": updated_friend_request['message']}))
+    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=jsonable_encoder({"response": updated_friend_request}))
