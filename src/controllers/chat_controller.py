@@ -1,45 +1,9 @@
 from main import app
 from typing import List
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import WebSocket, WebSocketDisconnect, Response
 from fastapi.responses import HTMLResponse
-
-html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <h2>Your ID: <span id="ws-id"></span></h2>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var client_id = Date.now()
-            document.querySelector("#ws-id").textContent = client_id;
-            var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`);
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
-
+import os
+root = os.path.dirname(os.path.abspath(__file__))
 
 class ConnectionManager:
     def __init__(self):
@@ -65,7 +29,9 @@ manager = ConnectionManager()
 
 @app.get("/chat")
 async def get():
-    return HTMLResponse(html)
+    with open(os.path.join(root, '../views/chat.html')) as fh:
+        data = fh.read()
+    return Response(content=data, media_type="text/html")
 
 
 @app.websocket("/ws/{client_id}")
