@@ -18,4 +18,4 @@ app.add_middleware(
 
 
 from src.config import database
-from src.controllers import health_controller, users_controller, friends_controller
+from src.controllers import health_controller, users_controller, friends_controller, chat_controller
