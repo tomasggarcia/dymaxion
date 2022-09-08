@@ -29,6 +29,10 @@ class FriendRepository():
         )
         return await self.get_by({'requester_user_email': requester_user_email, 'requested_user_email': requested_user_email})
 
+    async def remove(self, requester_user_email, requested_user_email):
+        delete_result_object =  await self.friends_db.delete_one({'requester_user_email':requester_user_email,'requested_user_email':requested_user_email})
+        return delete_result_object.deleted_count
+
     async def get_by(self, filter: dict) -> FriendRequestsModel:
         friend_request = await self.friends_db.find_one(filter)
         return FriendRequestsModel(**friend_request) if friend_request is not None else None

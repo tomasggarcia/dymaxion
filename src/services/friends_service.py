@@ -29,6 +29,17 @@ class FriendService():
     async def reject_friend_request(self, requester_user_email, requested_user_email):
         return await self._update_friend_request(requester_user_email, requested_user_email, status=StatusEnum.rejected)
 
+    async def remove_friend(self, requester_user_email, requested_user_email):
+        existing_friend_request = await self._friend_request_exist(requester_user_email,requested_user_email)
+        if existing_friend_request is None:
+            return {'deleted': False, "message": "User is not in friends list"}
+        if existing_friend_request.status == StatusEnum.accepted:
+            deleted_request = await self.friend_repository.remove(requester_user_email, requested_user_email)
+            if deleted_request > 0:
+                return {'deleted': True, "message": "user removed from friends list"}
+            return {'deleted': False, "message": "Could not remove user from friend list"}
+        return {'deleted': False, "message": "User is not in friends list"}
+
     async def _update_friend_request(self, requester_user_email, requested_user_email, status):
         existing_requester_user: UserModel = await self._user_exists(requester_user_email)
         existing_requested_user: UserModel = await self._user_exists(requested_user_email)
