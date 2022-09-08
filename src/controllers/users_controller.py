@@ -2,7 +2,7 @@ from main import app
 from src.models.user_model import UserModel
 from src.services.users_service import UserService
 from fastapi.encoders import jsonable_encoder
-from fastapi import status
+from fastapi import status, Body
 from fastapi.responses import JSONResponse
 
 @app.post("/users", response_description="User added")
@@ -15,7 +15,7 @@ async def create_user(user: UserModel):
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder({"response": {"user": new_user}}))
 
 @app.delete("/users")
-async def delete_user(user_email: str):
+async def delete_user(user_email: str = Body(example='email@test.com',embed=True)):
     service = UserService()
     delete_status = await service.delete_user(user_email)
     if delete_status:
