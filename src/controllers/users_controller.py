@@ -5,19 +5,26 @@ from fastapi.encoders import jsonable_encoder
 from fastapi import status, Body
 from fastapi.responses import JSONResponse
 
+
+user_service = UserService()
+
+@app.get("/friends/{user_email}")
+async def get_friend_list(user_email: str):
+    friend_list = await user_service.get_friend_list(user_email)
+    return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder({"response": friend_list}))
+
+
 @app.post("/users", response_description="User added")
 async def create_user(user: UserModel):
     user = jsonable_encoder(user)
-    service = UserService()
-    new_user = await service.create_user(user)
+    new_user = await user_service.create_user(user)
     if new_user is None:
         return JSONResponse(status_code=status.HTTP_409_CONFLICT, content=jsonable_encoder({"response": "User already exists"}))
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder({"response": {"user": new_user}}))
 
 @app.delete("/users")
 async def delete_user(user_email: str = Body(example='email@test.com',embed=True)):
-    service = UserService()
-    delete_status = await service.delete_user(user_email)
+    delete_status = await user_service.delete_user(user_email)
     if delete_status:
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder({"response": "User deleted succesfully"}))
     return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=jsonable_encoder({"response": "Email does not exist"}))
