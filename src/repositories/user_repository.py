@@ -12,12 +12,18 @@ class UserRepository():
     async def add_friend(self, user_email, friend_email):
         requester_user: UserModel = await self.find_by_email(user_email)
         if requester_user:
-            print('aca' ,user_email, friend_email)
             await self.user_db.update_one(
                 {'email': user_email},
                 {'$addToSet':{'friends': friend_email}}
             )
 
+    async def remove_friend(self, user_email, friend_email):
+        requester_user: UserModel = await self.find_by_email(user_email)
+        if requester_user:
+            await self.user_db.update_one(
+                {'email': user_email},
+                {'$pull':{'friends': friend_email}}
+            )
 
     async def find_by_email(self, email: str) -> Optional[UserModel]:
         return await self.get_by({'email':email})
