@@ -50,9 +50,18 @@ class FriendService():
         if existing_friend_request is None:
             return {'updated': False, "message":"Friend request does not exist"}
         updated_friend_request = await self.friend_repository.update_friend_request(requester_user_email,requested_user_email,status)
+        
+        if updated_friend_request.status == StatusEnum.accepted:
+            await self._add_friend(updated_friend_request.requester_user_email, updated_friend_request.requested_user_email)
+        
         return {'updated': True, 'updated_request':updated_friend_request}
 
 
+    async def _add_friend(self, user_email, friend_email):
+        requester_user: UserModel = await self.user_repository.find_by_email(user_email)
+        if requester_user:
+            await self.user_repository.add_friend(requester_user.email, friend_email)
+        return
     async def _user_exists(self, email) -> Optional[UserModel]:
             return await self.user_repository.find_by_email(email)
 
