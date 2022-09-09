@@ -1,3 +1,9 @@
+## Chat url
+```
+http://localhost:8000/chat?email=algo@gmail.com
+```
+
+
 ## Create virtual environment
 
 ```bash
