@@ -15,6 +15,9 @@ class FriendService():
         if existing_requester_user is None or existing_requested_user is None:
             return {'created': False, "message":"User does not exist"}
 
+        if existing_requested_user.email in existing_requester_user.friends:
+            return {'created': False, "message": "Users already friends"}
+
         existing_friend_request = await self._friend_request_exist(requester_user_email=existing_requester_user.email,requested_user_email=existing_requested_user.email)
         if existing_friend_request is not None:
             return {'created': False, "message":"Friend request already exist"}
@@ -29,7 +32,7 @@ class FriendService():
     async def reject_friend_request(self, requester_user_email, requested_user_email):
         return await self._update_friend_request(requester_user_email, requested_user_email, status=StatusEnum.rejected)
 
-    async def remove_friend(self, requester_user_email, requested_user_email):
+    async def remove_friend_request(self, requester_user_email, requested_user_email):
         existing_friend_request = await self._friend_request_exist(requester_user_email,requested_user_email)
         if existing_friend_request is None:
             return {'deleted': False, "message": "User is not in friends list"}
@@ -53,25 +56,28 @@ class FriendService():
         
         if updated_friend_request.status == StatusEnum.accepted:
             await self._add_friend(updated_friend_request.requester_user_email, updated_friend_request.requested_user_email)
+
+        await self.remove_friend_request(requester_user_email,requested_user_email)
+        if updated_friend_request.status == StatusEnum.accepted:
+            return {'updated': True, "message": "Friend request accepted"}
         
         if updated_friend_request.status == StatusEnum.rejected:
-            await self._remove_friend(updated_friend_request.requester_user_email, updated_friend_request.requested_user_email)
-        
-
-        return {'updated': True, 'updated_request':updated_friend_request}
+            return {'updated': True, "message": "Friend request rejected"}
 
 
     async def _add_friend(self, user_email, friend_email):
         requester_user: UserModel = await self.user_repository.find_by_email(user_email)
         if requester_user:
             await self.user_repository.add_friend(requester_user.email, friend_email)
+            await self.user_repository.add_friend(friend_email, requester_user.email)
         return
     
-    async def _remove_friend(self, user_email, friend_email):
+    async def remove_friend(self, user_email, friend_email):
         requester_user: UserModel = await self.user_repository.find_by_email(user_email)
         if requester_user:
             await self.user_repository.remove_friend(requester_user.email, friend_email)
-        return
+            await self.user_repository.remove_friend(friend_email, requester_user.email)
+        return {'deleted': True, 'message': "Friend deleted"}
 
     async def _user_exists(self, email) -> Optional[UserModel]:
             return await self.user_repository.find_by_email(email)
