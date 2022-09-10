@@ -28,20 +28,16 @@
                     label.innerText = item
                     list.appendChild(label);
                 })
+                function open_room(){
+                    console.log('ok')
+                }
                 let button = document.createElement("button")
                 button.innerText = "Chat"
                 button.onclick = open_room
                 actions.appendChild(button);
             }
-
-            function open_room(){
-                console.log('ok')
-                window.open('http://localhost:8000', '_blank').focus();
-            }
-
-            fetch(`http://localhost:8000/friends/${email}`)
-            .then((response) => response.json())
-            .then((data) => add_friend_list(data.response));
+            let friends = '{{ friends }}'.replace(/[\[]*[\s]*&#39;[\]]*/g,'').split(',')
+            add_friend_list(friends)
         </script>
     </body>
 </html>

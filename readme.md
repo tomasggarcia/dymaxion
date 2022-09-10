@@ -1,6 +1,6 @@
 ## Home url
 ```bash
-http://localhost:8000/home?email=email@test.com
+http://localhost:8000/home/email@test.com
 ```
 
 ## Chat url

@@ -5,6 +5,8 @@ from fastapi import WebSocket, WebSocketDisconnect, Response, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+from src.services.users_service import UserService
+
 
 class ConnectionManager:
     def __init__(self):
@@ -28,18 +30,19 @@ class ConnectionManager:
 root = os.path.dirname(os.path.abspath(__file__))
 manager = ConnectionManager()
 templates = Jinja2Templates(directory="src/templates")
+user_service = UserService()
+
 
 @app.get("/home/{email}", response_class=HTMLResponse)
 async def read_item(request: Request, email: str):
-    return templates.TemplateResponse("friends.html", {"request": request, "email": email})
-
+    friend_list = await user_service.get_friend_list(email)
+    return templates.TemplateResponse("friends.html", {"request": request, "email": email, 'friends': friend_list})
 
 @app.get("/chat")
 async def chat_page():
     with open(os.path.join(root, '../templates/chat.html')) as fh:
         data = fh.read()
     return Response(content=data, media_type="text/html")
-
 
 @app.websocket("/ws/{email}")
 async def websocket_endpoint(websocket: WebSocket, email: str):
