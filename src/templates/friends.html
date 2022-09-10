@@ -5,6 +5,7 @@
     </head>
     <body>
         <h1>Friend List</h1>
+        <h2>Welcome {{ email }}</h2>
         <h2>Your Friends: </h2>
         <div id="friendList"></div>
         <div id="actions" style="margin-top: 20px;"></div>
@@ -12,8 +13,7 @@
             const params = new Proxy(new URLSearchParams(window.location.search), {
             get: (searchParams, prop) => searchParams.get(prop),
             });
-            let email = params.email
-
+            let email = "{{ email }}"
             function add_friend_list(friends){
                 var list = document.getElementById('friendList');
                 var actions = document.getElementById('actions');
@@ -30,7 +30,13 @@
                 })
                 let button = document.createElement("button")
                 button.innerText = "Chat"
+                button.onclick = open_room
                 actions.appendChild(button);
+            }
+
+            function open_room(){
+                console.log('ok')
+                window.open('http://localhost:8000', '_blank').focus();
             }
 
             fetch(`http://localhost:8000/friends/${email}`)
