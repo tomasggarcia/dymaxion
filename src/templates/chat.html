@@ -14,8 +14,9 @@
         </ul>
         <script>
             let email = "{{ email }}"
+            let room = "{{ room }}"
             document.querySelector("#ws-id").textContent = email;
-            var ws = new WebSocket(`ws://localhost:8000/ws/${email}`);
+            var ws = new WebSocket(`ws://localhost:8000/ws/${room}?email=${email}`);
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')

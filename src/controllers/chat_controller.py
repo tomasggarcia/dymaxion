@@ -57,10 +57,15 @@ async def chat_page(request: Request, email: str, room: str):
             }
         )
 
-@app.websocket("/ws/{email}")
-async def websocket_endpoint(websocket: WebSocket, email: str):
+@app.websocket("/ws/{room}")
+async def websocket_endpoint(websocket: WebSocket, room: str, email: str):
+    room_service = RoomService()
+    email_in_room = await room_service.validate_email_in_room(email, room) 
+    if email_in_room is False:
+        manager.disconnect(websocket)   
+        await manager.broadcast("Your not authoraized to this room")  
     await manager.connect(websocket)
-    try:
+    try: 
         while True:
             data = await websocket.receive_text()
             await manager.broadcast(f"{email}: {data}")
