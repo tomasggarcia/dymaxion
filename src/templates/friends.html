@@ -21,7 +21,8 @@
                     console.log('item',item)
                     let checkBox = document.createElement("input");
                     checkBox.type = 'checkbox';
-                    checkBox.id = 'id' + i;
+                    checkBox.id = item;
+                    checkBox.name = 'friend'
                     checkBox.value = item;
                     list.appendChild(checkBox);
                     let label = document.createElement("label")
@@ -29,7 +30,12 @@
                     list.appendChild(label);
                 })
                 function open_room(){
-                    console.log('ok')
+                    var selectedEmails = Array.from(
+                        document.querySelectorAll('input[name=friend]:checked'),
+                        input => input.id
+                        )
+                        selectedEmailsString = selectedEmails.join("+")
+                        window.open(`{{ backend_url }}/chat?users=${selectedEmailsString}`,'_blank')
                 }
                 let button = document.createElement("button")
                 button.innerText = "Chat"

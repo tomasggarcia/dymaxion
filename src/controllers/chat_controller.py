@@ -31,12 +31,19 @@ root = os.path.dirname(os.path.abspath(__file__))
 manager = ConnectionManager()
 templates = Jinja2Templates(directory="src/templates")
 user_service = UserService()
-
+backend_url = os.getenv("BACKEND_URL")
 
 @app.get("/home/{email}", response_class=HTMLResponse)
 async def read_item(request: Request, email: str):
     friend_list = await user_service.get_friend_list(email)
-    return templates.TemplateResponse("friends.html", {"request": request, "email": email, 'friends': friend_list})
+    return templates.TemplateResponse(
+        "friends.html", {
+            "request": request, 
+            "email": email,
+            "friends": friend_list,
+            "backend_url": backend_url
+            }
+        )
 
 @app.get("/chat")
 async def chat_page():
