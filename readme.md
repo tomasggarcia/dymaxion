@@ -1,5 +1,10 @@
-## Chat url
+## Home url
+```bash
+http://localhost:8000/home?email=email@test.com
 ```
+
+## Chat url
+```bash
 http://localhost:8000/chat?email=algo@gmail.com
 ```
 

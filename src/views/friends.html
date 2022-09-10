@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>Friend List</h1>
+        <h2>Your Friends: </h2>
+        <div id="friendList"></div>
+        <div id="actions" style="margin-top: 20px;"></div>
+        <script>
+            const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+            });
+            let email = params.email
+
+            function add_friend_list(friends){
+                var list = document.getElementById('friendList');
+                var actions = document.getElementById('actions');
+                friends.forEach((item, i) => {
+                    console.log('item',item)
+                    let checkBox = document.createElement("input");
+                    checkBox.type = 'checkbox';
+                    checkBox.id = 'id' + i;
+                    checkBox.value = item;
+                    list.appendChild(checkBox);
+                    let label = document.createElement("label")
+                    label.innerText = item
+                    list.appendChild(label);
+                })
+                let button = document.createElement("button")
+                button.innerText = "Chat"
+                actions.appendChild(button);
+            }
+
+            fetch(`http://localhost:8000/friends/${email}`)
+            .then((response) => response.json())
+            .then((data) => add_friend_list(data.response));
+        </script>
+    </body>
+</html>

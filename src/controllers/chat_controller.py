@@ -27,8 +27,15 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
+@app.get("/home")
+async def friend_page():
+    with open(os.path.join(root, '../views/friends.html')) as fh:
+        data = fh.read()
+    return Response(content=data, media_type="text/html")
+
+
 @app.get("/chat")
-async def get():
+async def chat_page():
     with open(os.path.join(root, '../views/chat.html')) as fh:
         data = fh.read()
     return Response(content=data, media_type="text/html")
