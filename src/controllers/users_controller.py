@@ -8,12 +8,6 @@ from fastapi.responses import JSONResponse
 
 user_service = UserService()
 
-@app.get("/friends/{user_email}")
-async def get_friend_list(user_email: str):
-    friend_list = await user_service.get_friend_list(user_email)
-    return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder({"response": friend_list}))
-
-
 @app.post("/users", response_description="User added")
 async def create_user(user: UserModel):
     user = jsonable_encoder(user)
