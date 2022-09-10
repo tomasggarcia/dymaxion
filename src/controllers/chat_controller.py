@@ -1,12 +1,17 @@
 import os
 from main import app
 from typing import List
-from fastapi import WebSocket, WebSocketDisconnect, Response, Request
-from fastapi.responses import HTMLResponse
+from fastapi import WebSocket, WebSocketDisconnect, Response, Request, status
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
-
+from fastapi.encoders import jsonable_encoder
+from src.services.room_service import RoomService
 from src.services.users_service import UserService
 
+root = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory="src/templates")
+user_service = UserService()
+backend_url = os.getenv("BACKEND_URL")
 
 class ConnectionManager:
     def __init__(self):
@@ -26,12 +31,8 @@ class ConnectionManager:
         for connection in self.active_connections:
             await connection.send_text(message)
 
-
-root = os.path.dirname(os.path.abspath(__file__))
 manager = ConnectionManager()
-templates = Jinja2Templates(directory="src/templates")
-user_service = UserService()
-backend_url = os.getenv("BACKEND_URL")
+
 
 @app.get("/home/{email}", response_class=HTMLResponse)
 async def read_item(request: Request, email: str):
@@ -45,11 +46,16 @@ async def read_item(request: Request, email: str):
             }
         )
 
-@app.get("/chat")
-async def chat_page():
-    with open(os.path.join(root, '../templates/chat.html')) as fh:
-        data = fh.read()
-    return Response(content=data, media_type="text/html")
+@app.get("/chat/{room}", response_class=HTMLResponse)
+async def chat_page(request: Request, email: str, room: str):
+    return templates.TemplateResponse(
+        "chat.html", {
+            "request": request, 
+            "room": room,
+            "email": email,
+            "backend_url": backend_url
+            }
+        )
 
 @app.websocket("/ws/{email}")
 async def websocket_endpoint(websocket: WebSocket, email: str):
@@ -57,8 +63,13 @@ async def websocket_endpoint(websocket: WebSocket, email: str):
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{email} says: {data}")
+            await manager.broadcast(f"{email}: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast(f"Client #{email} left the chat")
+
+@app.post("/new-room")
+async def new_room(participants: List[str]):
+    room_service = RoomService()
+    room: str = await room_service.create_chat_room(participants)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder(room))

@@ -1,49 +1,73 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>Friend List</h1>
-        <h2>Welcome {{ email }}</h2>
-        <h2>Your Friends: </h2>
-        <div id="friendList"></div>
-        <div id="actions" style="margin-top: 20px;"></div>
-        <script>
-            const params = new Proxy(new URLSearchParams(window.location.search), {
+
+<head>
+    <title>Chat</title>
+</head>
+
+<body>
+    <h1>Friend List</h1>
+    <h2>Welcome {{ email }}</h2>
+    <h2>Your Friends: </h2>
+    <div id="friendList"></div>
+    <div id="actions" style="margin-top: 20px;"></div>
+    <script>
+        const params = new Proxy(new URLSearchParams(window.location.search), {
             get: (searchParams, prop) => searchParams.get(prop),
-            });
-            let email = "{{ email }}"
-            function add_friend_list(friends){
-                var list = document.getElementById('friendList');
-                var actions = document.getElementById('actions');
-                friends.forEach((item, i) => {
-                    console.log('item',item)
-                    let checkBox = document.createElement("input");
-                    checkBox.type = 'checkbox';
-                    checkBox.id = item;
-                    checkBox.name = 'friend'
-                    checkBox.value = item;
-                    list.appendChild(checkBox);
-                    let label = document.createElement("label")
-                    label.innerText = item
-                    list.appendChild(label);
-                })
-                function open_room(){
-                    var selectedEmails = Array.from(
-                        document.querySelectorAll('input[name=friend]:checked'),
-                        input => input.id
-                        )
-                        selectedEmailsString = selectedEmails.join("+")
-                        window.open(`{{ backend_url }}/chat?users=${selectedEmailsString}`,'_blank')
-                }
-                let button = document.createElement("button")
-                button.innerText = "Chat"
-                button.onclick = open_room
-                actions.appendChild(button);
+        });
+        let email = "{{ email }}"
+        let friends = '{{ friends }}'.replace(/[\[]*[\s]*&#39;[\]]*/g, '').split(',')
+        add_friend_list(friends)
+        function add_friend_list(friends) {
+            var list = document.getElementById('friendList');
+            var actions = document.getElementById('actions');
+            friends.forEach((item, i) => {
+                console.log('item', item)
+                let checkBox = document.createElement("input");
+                checkBox.type = 'checkbox';
+                checkBox.id = item;
+                checkBox.name = 'friend'
+                checkBox.value = item;
+                list.appendChild(checkBox);
+                let label = document.createElement("label")
+                label.innerText = item
+                list.appendChild(label);
+            })
+            let button = document.createElement("button")
+            button.innerText = "Chat"
+            button.onclick = open_room
+            actions.appendChild(button);
+        }
+        async function open_room() {
+            var selectedEmails = Array.from(
+                document.querySelectorAll('input[name=friend]:checked'),
+                input => input.id
+            )
+            if (selectedEmails.length === 0) {
+                alert("Please select friend/s")
             }
-            let friends = '{{ friends }}'.replace(/[\[]*[\s]*&#39;[\]]*/g,'').split(',')
-            add_friend_list(friends)
-        </script>
-    </body>
+            else {
+                room = await getRoomId(`{{ backend_url }}/new-room`, [email, ...selectedEmails])
+                window.open(`{{ backend_url }}/chat/${room}?email=${email}`, '_blank')
+            }
+        }
+        async function getRoomId(url , data) {
+            console.log(url)
+            console.log(data)
+            const response = await fetch(url, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                
+                },
+                body: JSON.stringify(data)
+            });
+            return response.json();
+        }
+    </script>
+</body>
+
 </html>

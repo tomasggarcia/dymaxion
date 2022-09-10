@@ -22,7 +22,6 @@ class FriendRepository():
         return await self.get_by({'_id':id})
     
     async def update_friend_request(self, requester_user_email, requested_user_email, status):
-        print(status)
         await self.friends_db.update_one(
             {'requester_user_email': requester_user_email,'requested_user_email': requested_user_email},
             {'$set':{'status': status}}
