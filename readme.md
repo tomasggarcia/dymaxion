@@ -9,6 +9,12 @@ http://localhost:8000/chat?email=algo@gmail.com
 ```
 
 
+## Run app
+```bash
+docker build -t dymaxion .
+docker run -dp 8000:8000  --name dycontainer dymaxion
+```
+
 ## Create virtual environment
 
 ```bash
