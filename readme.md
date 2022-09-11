@@ -1,3 +1,21 @@
+# Demo Link
+
+## Swagger Docs
+
+Link: [Docs](https://dymaxion.nonprod.link/docs)
+
+(https://dymaxion.nonprod.link/docs)
+
+
+![swagger](./assets/swagger.png "Title")
+
+## Home
+
+Link: [Home](https://dymaxion.nonprod.link/home/email@test.com)
+
+(https://dymaxion.nonprod.link/home/email@test.com)
+
+![home](./assets/home.png "Title")
 # Running Application
 
 ## Run app
@@ -10,8 +28,6 @@ docker run -dp 8000:8000  --name dycontainer dymaxion
 ```
 http://localhost:8000/docs
 ```
-
-![swagger](./assets/swagger.png "Title")
 
 ## Home url example
 ```bash
