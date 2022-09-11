@@ -17,7 +17,7 @@ async def create_user(user: UserModel):
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder({"response": {"user": new_user}}))
 
 @app.delete("/users")
-async def delete_user(user_email: str = Body(example='email@test.com',embed=True)):
+async def delete_user(user_email):
     delete_status = await user_service.delete_user(user_email)
     if delete_status:
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder({"response": "User deleted succesfully"}))
