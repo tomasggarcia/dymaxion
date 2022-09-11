@@ -1,3 +1,4 @@
+# Running Application
 
 ## Run app
 ```bash
@@ -5,14 +6,13 @@ docker build -t dymaxion .
 docker run -dp 8000:8000  --name dycontainer dymaxion
 ```
 
-
-## Push to AWS ECR
-```bash
-export AWS_ACCESS_KEY_ID=****
-export AWS_SECRET_ACCESS_KEY=****
-docker build -t 085419913565.dkr.ecr.us-east-1.amazonaws.com/dymaxion_challenge .
-docker push 085419913565.dkr.ecr.us-east-1.amazonaws.com/dymaxion_challenge
+## API Documentation (Swagger)
 ```
+http://localhost:8000/docs
+```
+
+![swagger](./assets/swagger.png "Title")
+
 ## Home url example
 ```bash
 http://localhost:8000/home/email@test.com
@@ -22,6 +22,8 @@ http://localhost:8000/home/email@test.com
 ```bash
 http://localhost:8000/chat/631c1a51bb9df9c1d383c867?email=email@test.com
 ```
+
+# Setting up for developmenet
 
 
 ## Create virtual environment
@@ -53,3 +55,13 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
+
+# Deploy
+
+## Push to AWS ECR
+```bash
+export AWS_ACCESS_KEY_ID=****
+export AWS_SECRET_ACCESS_KEY=****
+docker build -t 085419913565.dkr.ecr.us-east-1.amazonaws.com/dymaxion_challenge .
+docker push 085419913565.dkr.ecr.us-east-1.amazonaws.com/dymaxion_challenge
+```
