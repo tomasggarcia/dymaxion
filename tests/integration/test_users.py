@@ -1,11 +1,15 @@
 from fastapi.testclient import TestClient
 from main import app
+import pytest
+from httpx import AsyncClient
 import os
 
-client = TestClient(app)
+url = os.getenv("BACKEND_URL")
 
-def test_read_main():
-    response = client.post("/users",json={
+@pytest.mark.asyncio
+async def test_create_user():
+    async with AsyncClient(app=app, base_url=url) as ac:
+        response = await ac.post("/users",json={
         "email":"email@test.com",
         "password":"123"
     })
@@ -16,4 +20,11 @@ def test_read_main():
             "password":"123",
             "friends":[]
         }
-    }}
+        }}
+
+@pytest.mark.asyncio
+async def test_delete_user():
+    async with AsyncClient(app=app, base_url=url) as ac:
+        response = await ac.delete("/users", params={"user_email":"email@test.com"})
+    assert response.status_code == 200
+    assert response.json() == {"response": "User deleted succesfully"}
