@@ -16,6 +16,25 @@ Link: [Home](https://dymaxion.nonprod.link/home/email@test.com)
 (https://dymaxion.nonprod.link/home/email@test.com)
 
 ![home](./assets/home.png "Title")
+
+<br/><br/>
+# Running Tests
+
+Run all tests:
+```bash
+pytest
+```
+
+Run module tests example:
+```bash
+pytest tests/integration/test_users.py 
+```
+
+Run specific test example:
+```bash
+pytest -k "test_create_user"
+```
+<br/><br/>
 # Running Application
 
 ## Run app
@@ -24,21 +43,7 @@ docker build -t dymaxion .
 docker run -dp 8000:8000  --name dycontainer dymaxion
 ```
 
-## API Documentation (Swagger)
-```
-http://localhost:8000/docs
-```
-
-## Home url example
-```bash
-http://localhost:8000/home/email@test.com
-```
-
-## Chat url example
-```bash
-http://localhost:8000/chat/631c1a51bb9df9c1d383c867?email=email@test.com
-```
-
+<br/><br/>
 # Setting up for developmenet
 
 
@@ -71,7 +76,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-
+<br/><br/>
 # Deploy
 
 ## Push to AWS ECR
